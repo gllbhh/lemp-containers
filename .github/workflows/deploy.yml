@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     tags: ["v*"] # optional: run on version tags, e.g., v1.0.0
+  workflow_dispatch: {}
 
 jobs:
   build-and-push:
@@ -61,9 +62,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           script: |
-            cd /
             mkdir -p /opt/lemp/db/init/
 
       - name: Set permissions for /opt/lemp/db/init/
@@ -72,6 +73,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           script: |
             sudo chown -R $(whoami) /opt/lemp/db/init/
@@ -83,6 +85,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           source: db/init/init.sql
           target: /opt/lemp/db/init/
@@ -98,11 +101,13 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: 22
           script: |
             set -e
             cd /opt/lemp
 
+            # Stop existing stack (drop volumes only if volume doesn't exist yet)
             if [ ! -d "/var/lib/docker/volumes/lemp_db_data" ]; then
               docker compose down -v
             else
