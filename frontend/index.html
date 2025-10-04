@@ -3,19 +3,68 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>My LEMP</title>
+		<style>
+			body {
+				font-family: system-ui, sans-serif;
+				margin: 2rem;
+			}
+			h1,
+			h2,
+			h4 {
+				margin: 0.25rem 0;
+			}
+			.card {
+				padding: 1rem;
+				border: 1px solid #ddd;
+				border-radius: 8px;
+				max-width: 600px;
+			}
+			.row {
+				margin-top: 0.75rem;
+			}
+			.label {
+				color: #555;
+			}
+			.value {
+				font-weight: 600;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>Frontend (Nginx)</h1>
-		<div id="msg">Loading...</div>
+		<h2>By Gleb Bulygin</h2>
+		<h4>for Cloud-Services course</h4>
+
+		<div class="card">
+			<div class="row"><span class="label">Message:</span> <span id="msg">Loading…</span></div>
+			<div class="row"><span class="label">MySQL server time:</span> <span id="srv-time">Loading…</span></div>
+		</div>
+
 		<script>
-			fetch("/api")
-				.then((r) => r.json())
-				.then((d) => {
+			async function loadMessage() {
+				try {
+					const r = await fetch("/api");
+					const d = await r.json();
 					document.getElementById("msg").innerText = d.message;
-				})
-				.catch((e) => {
+				} catch (e) {
 					document.getElementById("msg").innerText = "API error: " + e;
-				});
+					console.error(e);
+				}
+			}
+
+			async function loadTime() {
+				try {
+					const r = await fetch("/api/time");
+					const d = await r.json();
+					document.getElementById("srv-time").innerText = d.time;
+				} catch (e) {
+					document.getElementById("srv-time").innerText = "API error: " + e;
+					console.error(e);
+				}
+			}
+
+			loadMessage();
+			loadTime();
 		</script>
 	</body>
 </html>
