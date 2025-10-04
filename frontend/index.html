@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>My LEMP</title>
+	</head>
+	<body>
+		<h1>Frontend (Nginx)</h1>
+		<div id="msg">Loading...</div>
+		<script>
+			fetch("/api")
+				.then((r) => r.json())
+				.then((d) => {
+					document.getElementById("msg").innerText = d.message;
+				})
+				.catch((e) => {
+					document.getElementById("msg").innerText = "API error: " + e;
+				});
+		</script>
+	</body>
+</html>
